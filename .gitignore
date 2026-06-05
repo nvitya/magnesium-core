@@ -1,0 +1,10 @@
+build/downloads
+build/sstate-cache
+build/tmp
+build/cache
+build/deploy
+build/bitbake-cookerdaemon.log
+build/ssh/bitbucket_deploy_key
+*.lock
+*.code-workspace
+.vscode

@@ -10,7 +10,7 @@ inherit kernel-yocto
 
 DEPENDS += "lz4-native"
 
-COMPATIBLE_MACHINE = "luckfox-lyra-plus"
+COMPATIBLE_MACHINE = "(luckfox-lyra-plus|luckfox-lyra-pi)"
 
 LINUX_VERSION = "6.6.89"
 PV = "${LINUX_VERSION}+git${SRCPV}"
@@ -26,6 +26,8 @@ SRC_URI = " \
     file://magnesium-core.cfg \
     file://rk3506g-luckfox-lyra-plus-magnesium.dts \
     file://rk3506-luckfox-lyra-magnesium.dtsi \
+    file://rk3506b-luckfox-lyra-pi-sd.dts \
+    file://rk3506-luckfox-lyra-ultra.dtsi \
 "
 
 # For first bring-up AUTOREV is convenient.
@@ -46,9 +48,21 @@ do_patch:append() {
     install -m 0644 ${UNPACKDIR}/rk3506-luckfox-lyra-magnesium.dtsi \
         ${S}/arch/arm/boot/dts/rockchip/rk3506-luckfox-lyra-magnesium.dtsi
 
+    install -m 0644 ${UNPACKDIR}/rk3506b-luckfox-lyra-pi-sd.dts \
+        ${S}/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-pi-sd.dts
+
+    install -m 0644 ${UNPACKDIR}/rk3506-luckfox-lyra-ultra.dtsi \
+        ${S}/arch/arm/boot/dts/rockchip/rk3506-luckfox-lyra-ultra.dtsi
+
     if ! grep -q "rk3506g-luckfox-lyra-plus-magnesium.dtb" \
         ${S}/arch/arm/boot/dts/rockchip/Makefile; then
         echo 'dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3506g-luckfox-lyra-plus-magnesium.dtb' \
+            >> ${S}/arch/arm/boot/dts/rockchip/Makefile
+    fi
+
+    if ! grep -q "rk3506b-luckfox-lyra-pi-sd.dtb" \
+        ${S}/arch/arm/boot/dts/rockchip/Makefile; then
+        echo 'dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3506b-luckfox-lyra-pi-sd.dtb' \
             >> ${S}/arch/arm/boot/dts/rockchip/Makefile
     fi
 }

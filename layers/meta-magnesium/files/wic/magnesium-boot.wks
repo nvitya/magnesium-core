@@ -12,9 +12,13 @@
 # the host PC can connect via UMS, dynamically create the 'rootfs' partition using the 
 # remaining free space, and flash the rootfs payload directly.
 
+bootloader --ptable gpt
+
 # Write idbloader to sector 64 (32KB). We use `--no-table` so it stays hidden in the raw space before the first partition.
-bootimg-partition --ondisk mmcblk --source rawcopy --sourceparams="file=idbloader.img" --no-table --align 32
+part --ondisk mmcblk --source rawcopy --sourceparams="file=idblock.img" --no-table --align 32
 
 # Define the U-Boot partition explicitly in the GPT starting at sector 16384 (8MB) to protect it.
-# We populate it with u-boot.itb.
-partition uboot --ondisk mmcblk --source rawcopy --sourceparams="file=u-boot.itb" --part-name uboot --align 8192 --size 4M
+# We populate it with uboot.img.
+part uboot --ondisk mmcblk --source rawcopy --sourceparams="file=uboot.img" --part-name uboot --align 8192 --size 4M
+
+

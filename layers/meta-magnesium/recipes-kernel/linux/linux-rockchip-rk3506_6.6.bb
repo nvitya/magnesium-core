@@ -71,3 +71,19 @@ do_patch:append() {
 # Yocto applies defconfig first, then applies .cfg fragments from SRC_URI.
 KCONFIG_MODE = "alldefconfig"
 
+do_install:append() {
+    # Create symlink for devtree.dtb pointing to the machine's dtb
+    if [ -n "${KERNEL_DEVICETREE}" ]; then
+        for dtb in ${KERNEL_DEVICETREE}; do
+            dtb_ext=${dtb##*.}
+            dtb_base_name=`basename $dtb .$dtb_ext`
+            # find the actual dtb in /boot (might be prefixed with devicetree-)
+            real_dtb=$(find ${D}/boot -name "*${dtb_base_name}.${dtb_ext}" -printf "%f\n" | head -n 1)
+            if [ -n "$real_dtb" ]; then
+                ln -sf $real_dtb ${D}/boot/devtree.dtb
+                break
+            fi
+        done
+    fi
+}
+

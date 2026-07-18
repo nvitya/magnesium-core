@@ -65,9 +65,9 @@ do_configure:prepend() {
 
 	sed -i 's/ found;/ found = NULL;/' ${S}/lib/avb/libavb/avb_slot_verify.c
 
-	# Force Yocto boot command instead of Android boot_fit fallback
-	# Assuming SD card is mmc 0 and rootfs is partition 2 (partition 1 is uboot)
-	sed -i 's|#define CONFIG_BOOTCOMMAND RKIMG_BOOTCOMMAND|#undef CONFIG_BOOTCOMMAND\\n#define CONFIG_BOOTCOMMAND "ext4load mmc 0:2 ${kernel_addr_r} /boot/zImage; ext4load mmc 0:2 ${fdt_addr_r} /boot/devtree.dtb; bootz ${kernel_addr_r} - ${fdt_addr_r}"|' ${S}/include/configs/evb_rk3506.h
+	# Append custom bootcmd to evb_rk3506.h (safe as it overrides previous defines)
+	echo '#undef CONFIG_BOOTCOMMAND' >> ${S}/include/configs/evb_rk3506.h
+	echo '#define CONFIG_BOOTCOMMAND "ext4load mmc 0:2 ${kernel_addr_r} /boot/zImage; ext4load mmc 0:2 ${fdt_addr_r} /boot/devtree.dtb; bootz ${kernel_addr_r} - ${fdt_addr_r}"' >> ${S}/include/configs/evb_rk3506.h
 }
 
 # Generate Rockchip style loader binaries

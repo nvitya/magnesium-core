@@ -46,6 +46,15 @@ using the gdisk /dev/sdX
 
 Menu commands: x, e, m, w
 
+The boot command does not set correctly for now, stop the u-boot (with ctrl-c)
+and enter these:
+
+```
+setenv bootcmd 'ext4load mmc 0:2 ${kernel_addr_r} /boot/zImage; ext4load mmc 0:2 ${fdt_addr_r} /boot/devtree.dtb; bootz ${kernel_addr_r} - ${fdt_addr_r}'
+saveenv
+boot
+```
+
 ### Build the target:
 
 `bitbake image-magnesium`

@@ -21,4 +21,6 @@ part --ondisk mmcblk --source rawcopy --sourceparams="file=idblock.img" --no-tab
 # We populate it with uboot.img.
 part uboot --ondisk mmcblk --source rawcopy --sourceparams="file=uboot.img" --part-name uboot --align 8192 --size 4M
 
+# Define the trust partition starting at sector 24576 (12MB)
+
 

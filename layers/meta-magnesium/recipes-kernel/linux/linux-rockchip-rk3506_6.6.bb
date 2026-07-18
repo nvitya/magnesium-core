@@ -85,5 +85,11 @@ do_install:append() {
             fi
         done
     fi
+
+    # Create symlink for zImage
+    real_zimage=$(find ${D}/boot -name "zImage-*" -printf "%f\n" | head -n 1)
+    if [ -n "$real_zimage" ]; then
+        ln -sf $real_zimage ${D}/boot/zImage
+    fi
 }
 

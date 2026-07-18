@@ -37,5 +37,15 @@ The compilation works natively on an Ubuntu 22.04 or 24.04 Host.
 ### Initialize the environment:
 `source layers/openembedded-core/oe-init-build-env build`
 
+### Build the bootimg
+
+`bitbake magnesium-bootimg`
+
+After copying the `.wic` file to the sdcard the GPT partition must be repaired
+using the gdisk /dev/sdX
+
+Menu commands: x, e, m, w
+
 ### Build the target:
-`bitbake image-magnesium-main`
+
+`bitbake image-magnesium`

@@ -22,6 +22,7 @@ SRCREV_rkbin = "32ccaf811ae70ce050aa810869c63c2b34324d59"
 SRC_URI = " \
 	git:///lindata2/luckfox/luckfox_sdk_2508/u-boot;protocol=file;nobranch=1; \
 	git:///lindata2/luckfox/luckfox_sdk_2508/rkbin;protocol=file;nobranch=1;name=rkbin;destsuffix=rkbin; \
+	file://luckfox-boot.cfg \
 "
 
 SRCREV_FORMAT = "default_rkbin"
@@ -63,6 +64,10 @@ do_configure:prepend() {
 	[ ! -e "${S}/.config" ] || make -C ${S} mrproper
 
 	sed -i 's/ found;/ found = NULL;/' ${S}/lib/avb/libavb/avb_slot_verify.c
+
+	# Force Yocto boot command instead of Android boot_fit fallback
+	# Assuming SD card is mmc 0 and rootfs is partition 2 (partition 1 is uboot)
+	sed -i 's|#define CONFIG_BOOTCOMMAND RKIMG_BOOTCOMMAND|#undef CONFIG_BOOTCOMMAND\\n#define CONFIG_BOOTCOMMAND "ext4load mmc 0:2 ${kernel_addr_r} /boot/zImage; ext4load mmc 0:2 ${fdt_addr_r} /boot/devtree.dtb; bootz ${kernel_addr_r} - ${fdt_addr_r}"|' ${S}/include/configs/evb_rk3506.h
 }
 
 # Generate Rockchip style loader binaries
@@ -86,24 +91,18 @@ do_compile:append() {
 			cp -rT ${S}/${d} ${d}
 		done
 
-		# Pack rockchip loader images
+		# Pack rockchip loader images (generates uboot.img, trust.img, generic idblock)
 		./make.sh
+		# Re-pack idblock with our freshly built u-boot-spl.bin
+		./make.sh --spl
 	fi
 
 	ln -sf *_loader*.bin "${RK_LOADER_BIN}"
 
-	# Generate idblock image
-	bbnote "${PN}: Generating ${RK_IDBLOCK_IMG} from ${RK_LOADER_BIN}"
-	../rkbin/tools/boot_merger unpack -i "${RK_LOADER_BIN}" -o .
-
-	if [ -f FlashHead.bin ];then
-		cat FlashHead.bin FlashData.bin > "${RK_IDBLOCK_IMG}"
-	else
-		./tools/mkimage -n "${RK_SOC_FAMILY}" -T rksd -d FlashData.bin \
-			"${RK_IDBLOCK_IMG}"
-	fi
-
-	cat FlashBoot.bin >> "${RK_IDBLOCK_IMG}"
+	# The SDK's make.sh already natively generates a valid *idblock*.img for newer SoCs (NEWIDB=true).
+	# We just need to symlink it instead of rebuilding it incorrectly.
+	bbnote "${PN}: Symlinking natively generated idblock.img"
+	ln -sf *_idblock*.img "${RK_IDBLOCK_IMG}"
 }
 
 do_deploy:append() {

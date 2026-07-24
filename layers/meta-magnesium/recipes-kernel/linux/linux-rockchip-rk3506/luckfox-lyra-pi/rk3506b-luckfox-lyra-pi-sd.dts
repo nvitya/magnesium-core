@@ -8,11 +8,28 @@
 #include "rk3506-luckfox-lyra-ultra.dtsi"
 
 / {
-	model = "Luckfox Lyra Pi";
-	compatible = "rockchip,rk3506g-demo-display-control", "rockchip,rk3506";
+	model = "Luckfox Lyra Pi - SD";
+	compatible = "rockchip,rk3506";
 
 	chosen {
-		bootargs = "earlycon=uart8250,mmio32,0xff0a0000 console=tty1 console=ttyFIQ0 storagemedia=sd root=/dev/mmcblk0p3 rootfstype=ext4 rootwait snd_aloop.index=7 snd_aloop.use_raw_jiffies=1";
+		bootargs = "earlycon=uart8250,mmio32,0xff0a0000 console=ttyFIQ0 rootwait snd_aloop.index=7 snd_aloop.use_raw_jiffies=1";
+	};
+
+	mcu_rproc: mcu@fff84000 {
+		compatible = "rockchip,rk3506-mcu";
+		reg = <0xfff84000 0x8000>;
+		firmware-name = "rk3506-m0.elf";
+
+		clocks = <&cru HCLK_M0>, <&cru STCLK_M0>;
+
+		resets = <&cru SRST_H_M0>, <&cru SRST_M0_JTAG>, <&cru SRST_HRESETN_M0_AC>;
+		reset-names = "h_m0", "m0_jtag", "hresetn_m0_ac";
+	};
+
+	wireless_bluetooth: wireless-bluetooth {
+		compatible = "bluetooth-platdata";
+		BT,power_gpio = <&gpio1 RK_PC5 GPIO_ACTIVE_HIGH>;
+		status = "okay";
 	};
 
 	es8311_sound: es8311-sound {
@@ -37,6 +54,31 @@
 		pinctrl-0 = <&lcd_pwren_h>;
 		regulator-name = "vcc3v3_lcd";
 		regulator-always-on;
+	};
+};
+
+&reserved_memory {
+	/* remote amp core address */
+	amp_shmem_reserved: amp-shmem@3b00000 {
+		reg = <0x03b00000 0x100000>;
+    	no-map;
+	};
+
+	rpmsg_reserved: rpmsg@3c00000 {
+		reg = <0x03c00000 0x100000>;
+    	no-map;
+	};
+
+	rpmsg_dma_reserved: rpmsg-dma@3d00000 {
+		compatible = "shared-dma-pool";
+		reg = <0x03d00000 0x100000>;
+    	no-map;
+	};
+
+	/* mcu address */
+	mcu_reserved: mcu@fff80000 {
+		reg = <0xfff80000 0xc000>;
+    	no-map;
 	};
 };
 
@@ -77,24 +119,21 @@
 };
 
 &dsi {
-	status = "okay";
+	status = "disabled";
 };
 
 &dsi_dphy {
-	status = "okay";
+	status = "disabled";
 };
 
 &dsi_in_vop {
-	status = "okay";
+	status = "disabled";
 };
 
 &route_dsi {
-	status = "okay";
+	status = "disabled";
 };
 
-&dsi_panel {
-	power-supply = <&vcc3v3_lcd>;
-};
 
 /**********ethernet**********/
 &gmac0 {

@@ -24,8 +24,6 @@ SRC_URI = " \
     git://github.com/rockchip-linux/kernel.git;protocol=https;branch=${KBRANCH} \
     file://defconfig \
     file://magnesium-core.cfg \
-    file://rk3506g-luckfox-lyra-plus-magnesium.dts \
-    file://rk3506-luckfox-lyra-magnesium.dtsi \
     file://rk3506b-luckfox-lyra-pi-sd.dts \
     file://rk3506-luckfox-lyra-ultra.dtsi \
 "
@@ -42,23 +40,11 @@ S = "${WORKDIR}/git"
 do_patch:append() {
     install -d ${S}/arch/arm/boot/dts/rockchip
 
-    install -m 0644 ${UNPACKDIR}/rk3506g-luckfox-lyra-plus-magnesium.dts \
-        ${S}/arch/arm/boot/dts/rockchip/rk3506g-luckfox-lyra-plus-magnesium.dts
-
-    install -m 0644 ${UNPACKDIR}/rk3506-luckfox-lyra-magnesium.dtsi \
-        ${S}/arch/arm/boot/dts/rockchip/rk3506-luckfox-lyra-magnesium.dtsi
-
     install -m 0644 ${UNPACKDIR}/rk3506b-luckfox-lyra-pi-sd.dts \
         ${S}/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-pi-sd.dts
 
     install -m 0644 ${UNPACKDIR}/rk3506-luckfox-lyra-ultra.dtsi \
         ${S}/arch/arm/boot/dts/rockchip/rk3506-luckfox-lyra-ultra.dtsi
-
-    if ! grep -q "rk3506g-luckfox-lyra-plus-magnesium.dtb" \
-        ${S}/arch/arm/boot/dts/rockchip/Makefile; then
-        echo 'dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3506g-luckfox-lyra-plus-magnesium.dtb' \
-            >> ${S}/arch/arm/boot/dts/rockchip/Makefile
-    fi
 
     if ! grep -q "rk3506b-luckfox-lyra-pi-sd.dtb" \
         ${S}/arch/arm/boot/dts/rockchip/Makefile; then

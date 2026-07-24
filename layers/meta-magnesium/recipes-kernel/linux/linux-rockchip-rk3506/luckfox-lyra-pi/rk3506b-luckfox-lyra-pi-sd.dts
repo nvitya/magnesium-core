@@ -47,14 +47,10 @@
 
 	};
 
-	vcc3v3_lcd: vcc3v3-lcd {
-		status = "okay";
-		compatible = "regulator-fixed";
-		pinctrl-names = "default";
-		pinctrl-0 = <&lcd_pwren_h>;
-		regulator-name = "vcc3v3_lcd";
-		regulator-always-on;
-	};
+};
+
+&cpu0 {
+	/delete-property/ cpu-supply;
 };
 
 &reserved_memory {
@@ -118,6 +114,11 @@
 	size = <0x2000000>;
 };
 
+&display_subsystem {
+	logo-memory-region = <&drm_logo>;
+	status = "disabled";
+};
+
 &dsi {
 	status = "disabled";
 };
@@ -133,7 +134,6 @@
 &route_dsi {
 	status = "disabled";
 };
-
 
 /**********ethernet**********/
 &gmac0 {

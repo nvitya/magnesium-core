@@ -20,6 +20,7 @@ IMAGE_INSTALL:append = " \
     strace \
     iproute2 \
     ethtool \
+    can-utils \
     gdbserver \
     init-ifupdown \
     i2c-tools \

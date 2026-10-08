@@ -41,8 +41,8 @@ IMAGE_INSTALL:append = " \
 # Bake the kernel into the rootfs
 IMAGE_INSTALL:append = " kernel-image kernel-devicetree kernel-modules"
 
-# Remote processor driver for RK3506 Cortex-M0 MCU
-IMAGE_INSTALL:append:rk3506 = " rk3506-rproc"
+# RK3506 hardware-specific drivers and tools
+IMAGE_INSTALL:append:rk3506 = " rk3506-rproc aic8800 wpa-supplicant iw wireless-regdb-static"
 
 # Pregenerated hostkeys (for development - remove in prod)
 #IMAGE_INSTALL:append = " ssh-pregen-hostkeys"

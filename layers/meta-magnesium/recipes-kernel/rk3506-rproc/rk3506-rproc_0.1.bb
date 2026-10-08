@@ -14,7 +14,7 @@ SRC_URI = " \
 
 S = "${UNPACKDIR}"
 
-COMPATIBLE_MACHINE = "(luckfox-lyra-plus|luckfox-lyra-pi)"
+COMPATIBLE_MACHINE = "rk3506"
 
 # Automatically load the kernel module on boot
 KERNEL_MODULE_AUTOLOAD += "rk3506_rproc"

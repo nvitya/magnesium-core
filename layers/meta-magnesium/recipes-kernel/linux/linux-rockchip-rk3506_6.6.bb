@@ -28,11 +28,9 @@ SRC_URI = " \
     file://rk3506-luckfox-lyra-ultra.dtsi \
 "
 
-# For first bring-up AUTOREV is convenient.
 # For reproducible builds, replace this with a fixed commit hash.
-SRCREV = "${AUTOREV}"
+SRCREV = "1ba51b059f25533c5529b7f68186190b47d6a7b3"
 
-S = "${WORKDIR}/git"
 
 # The DTS source is kept in the magnesium layer and copied into the kernel tree.
 # Your source URL points to arch/arm/boot/dts/rockchip, so install there.

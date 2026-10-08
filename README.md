@@ -51,6 +51,7 @@ and enter these:
 
 ```
 setenv bootcmd 'ext4load mmc 0:2 ${kernel_addr_r} /boot/zImage; ext4load mmc 0:2 ${fdt_addr_r} /boot/devtree.dtb; bootz ${kernel_addr_r} - ${fdt_addr_r}'
+setenv bootargs root=/dev/mmcblk0p2
 saveenv
 boot
 ```

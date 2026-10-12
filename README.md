@@ -16,7 +16,9 @@ The Magnesium-Core configurations here currently are using the `wrynose` (LTS) Y
 | `luckfox-lyra-plus`    | Luckfox Lyra Plus                             |
 | `luckfox-lyra-ultra`   | Luckfox Lyra Ultra WiFi                       |
 | `luckfox-lyra-ultra-w` | Luckfox Lyra Ultra WiFi                       |
-| `luckfox-lyra-pi-b-w`  | Luckfox Lyra Pi-B WiFi                        |
+
+| `luckfox-lyra-pi`      | Luckfox Lyra Pi-B WiFi                        |
+| `luckfox-lyra-zero-w`  | Luckfox Lyra Zero W                           |
 | `milkv-duos`           | Milk-V Duo-S                                  |
 
 # Development Environment Setup

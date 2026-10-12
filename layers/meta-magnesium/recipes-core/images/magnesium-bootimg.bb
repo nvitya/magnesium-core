@@ -11,9 +11,9 @@ IMAGE_INSTALL = ""
 IMAGE_FEATURES = ""
 IMAGE_LINGUAS = ""
 
-# Since U-Boot is not currently integrated in the build, you will need to manually
-# Since U-Boot is now integrated, we depend on it to produce the binaries for WIC
+# Build U-Boot and deploy the binaries consumed by the WIC rawcopy sources.
 EXTRA_IMAGEDEPENDS += "virtual/bootloader"
+do_image_wic[depends] += "virtual/bootloader:do_deploy"
 
 # Prevent the build system from failing if the rootfs is empty
 IMAGE_ROOTFS_SIZE = "0"

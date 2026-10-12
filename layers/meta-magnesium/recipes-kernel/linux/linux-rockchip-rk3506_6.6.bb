@@ -10,22 +10,30 @@ inherit kernel-yocto
 
 DEPENDS += "lz4-native"
 
-COMPATIBLE_MACHINE = "(luckfox-lyra-plus|luckfox-lyra-pi)"
+COMPATIBLE_MACHINE = "(luckfox-lyra-plus|luckfox-lyra-pi|luckfox-lyra-zero-w)"
 
 LINUX_VERSION = "6.6.89"
 PV = "${LINUX_VERSION}+git${SRCPV}"
 
 KBRANCH = "develop-6.6"
 
-#FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}/${MACHINE}:${THISDIR}/${PN}:"
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}/${MACHINE}:${THISDIR}/${BPN}:"
+
+# Select only the device-tree sources belonging to the current machine.
+RK3506_DTS:luckfox-lyra-plus = "rk3506g-luckfox-lyra-plus-magnesium.dts"
+RK3506_DTS:luckfox-lyra-pi = "rk3506b-luckfox-lyra-pi-sd.dts"
+RK3506_DTS:luckfox-lyra-zero-w = "rk3506b-luckfox-lyra-zero-w.dts"
+
+RK3506_DTSI:luckfox-lyra-plus = "rk3506-luckfox-lyra-magnesium.dtsi"
+RK3506_DTSI:luckfox-lyra-pi = "rk3506-luckfox-lyra-ultra.dtsi"
+RK3506_DTSI:luckfox-lyra-zero-w = "rk3506-luckfox-lyra-ultra.dtsi"
 
 SRC_URI = " \
     git://github.com/rockchip-linux/kernel.git;protocol=https;branch=${KBRANCH} \
     file://defconfig \
     file://magnesium-core.cfg \
-    file://rk3506b-luckfox-lyra-pi-sd.dts \
-    file://rk3506-luckfox-lyra-ultra.dtsi \
+    file://${RK3506_DTS} \
+    file://${RK3506_DTSI} \
 "
 
 # For reproducible builds, replace this with a fixed commit hash.
@@ -38,15 +46,16 @@ SRCREV = "1ba51b059f25533c5529b7f68186190b47d6a7b3"
 do_patch:append() {
     install -d ${S}/arch/arm/boot/dts/rockchip
 
-    install -m 0644 ${UNPACKDIR}/rk3506b-luckfox-lyra-pi-sd.dts \
-        ${S}/arch/arm/boot/dts/rockchip/rk3506b-luckfox-lyra-pi-sd.dts
+    install -m 0644 ${UNPACKDIR}/${RK3506_DTS} \
+        ${S}/arch/arm/boot/dts/rockchip/${RK3506_DTS}
 
-    install -m 0644 ${UNPACKDIR}/rk3506-luckfox-lyra-ultra.dtsi \
-        ${S}/arch/arm/boot/dts/rockchip/rk3506-luckfox-lyra-ultra.dtsi
+    install -m 0644 ${UNPACKDIR}/${RK3506_DTSI} \
+        ${S}/arch/arm/boot/dts/rockchip/${RK3506_DTSI}
 
-    if ! grep -q "rk3506b-luckfox-lyra-pi-sd.dtb" \
+    dtb="$(basename "${RK3506_DTS}" .dts).dtb"
+    if ! grep -Fq "$dtb" \
         ${S}/arch/arm/boot/dts/rockchip/Makefile; then
-        echo 'dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3506b-luckfox-lyra-pi-sd.dtb' \
+        printf 'dtb-$(CONFIG_ARCH_ROCKCHIP) += %s\n' "$dtb" \
             >> ${S}/arch/arm/boot/dts/rockchip/Makefile
     fi
 }

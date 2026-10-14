@@ -10,7 +10,7 @@ inherit kernel-yocto
 
 DEPENDS += "lz4-native"
 
-COMPATIBLE_MACHINE = "(luckfox-lyra-plus|luckfox-lyra-pi|luckfox-lyra-zero-w)"
+COMPATIBLE_MACHINE = "(luckfox-lyra-plus|luckfox-lyra-ultra|luckfox-lyra-pi|luckfox-lyra-zero-w)"
 
 LINUX_VERSION = "6.6.89"
 PV = "${LINUX_VERSION}+git${SRCPV}"
@@ -20,12 +20,14 @@ KBRANCH = "develop-6.6"
 FILESEXTRAPATHS:prepend := "${THISDIR}/${BPN}/${MACHINE}:${THISDIR}/${BPN}:"
 
 # Select only the device-tree sources belonging to the current machine.
-RK3506_DTS:luckfox-lyra-plus = "rk3506g-luckfox-lyra-plus-magnesium.dts"
-RK3506_DTS:luckfox-lyra-pi = "rk3506b-luckfox-lyra-pi-sd.dts"
+RK3506_DTS:luckfox-lyra-plus   = "rk3506g-luckfox-lyra-plus-magnesium.dts"
+RK3506_DTS:luckfox-lyra-ultra  = "rk3506b-luckfox-lyra-ultra.dts"
+RK3506_DTS:luckfox-lyra-pi     = "rk3506b-luckfox-lyra-pi-sd.dts"
 RK3506_DTS:luckfox-lyra-zero-w = "rk3506b-luckfox-lyra-zero-w.dts"
 
-RK3506_DTSI:luckfox-lyra-plus = "rk3506-luckfox-lyra-magnesium.dtsi"
-RK3506_DTSI:luckfox-lyra-pi = "rk3506-luckfox-lyra-ultra.dtsi"
+RK3506_DTSI:luckfox-lyra-plus   = "rk3506-luckfox-lyra-magnesium.dtsi"
+RK3506_DTSI:luckfox-lyra-ultra  = "rk3506-luckfox-lyra-ultra.dtsi"
+RK3506_DTSI:luckfox-lyra-pi     = "rk3506-luckfox-lyra-ultra.dtsi"
 RK3506_DTSI:luckfox-lyra-zero-w = "rk3506-luckfox-lyra-ultra.dtsi"
 
 SRC_URI = " \

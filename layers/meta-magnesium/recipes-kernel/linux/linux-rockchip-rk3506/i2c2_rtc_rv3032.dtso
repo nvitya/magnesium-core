@@ -1,0 +1,18 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Micro Crystal RV-3032-C7 RTC on the I2C2 bus.
+ */
+
+/dts-v1/;
+/plugin/;
+
+&{/i2c@ff060000} {
+	status = "okay";
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	rv3032: rtc@51 {
+		compatible = "microcrystal,rv3032";
+		reg = <0x51>;
+	};
+};

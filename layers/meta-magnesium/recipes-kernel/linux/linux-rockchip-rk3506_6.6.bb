@@ -32,9 +32,20 @@ SRC_URI = " \
     git://github.com/rockchip-linux/kernel.git;protocol=https;branch=${KBRANCH} \
     file://defconfig \
     file://magnesium-core.cfg \
+    file://rv3032.cfg \
     file://${RK3506_DTS} \
     file://${RK3506_DTSI} \
+    file://i2c2_rtc_rv3032.dtso \
 "
+
+# The RV-3032 is an optional daughterboard. Keep it as an overlay so the base
+# DTB remains usable when the module is not fitted. All machines using this
+# kernel get the same overlay artifact in /boot.
+KERNEL_DEVICETREE:append = " rockchip/i2c2_rtc_rv3032.dtbo"
+
+# The overlay targets the RK3506 I2C2 node by path, so the base DTB does not
+# need global -@ symbol export. This keeps /omit-if-no-ref/ pinctrl groups
+# pruned and avoids retaining thousands of otherwise-unused nodes.
 
 # For reproducible builds, replace this with a fixed commit hash.
 SRCREV = "1ba51b059f25533c5529b7f68186190b47d6a7b3"
@@ -51,6 +62,15 @@ do_patch:append() {
 
     install -m 0644 ${UNPACKDIR}/${RK3506_DTSI} \
         ${S}/arch/arm/boot/dts/rockchip/${RK3506_DTSI}
+
+    install -m 0644 ${UNPACKDIR}/i2c2_rtc_rv3032.dtso \
+        ${S}/arch/arm/boot/dts/rockchip/i2c2_rtc_rv3032.dtso
+
+    if ! grep -Fq "i2c2_rtc_rv3032.dtbo" \
+        ${S}/arch/arm/boot/dts/rockchip/Makefile; then
+        printf 'dtb-$(CONFIG_ARCH_ROCKCHIP) += i2c2_rtc_rv3032.dtbo\n' \
+            >> ${S}/arch/arm/boot/dts/rockchip/Makefile
+    fi
 
     dtb="$(basename "${RK3506_DTS}" .dts).dtb"
     if ! grep -Fq "$dtb" \

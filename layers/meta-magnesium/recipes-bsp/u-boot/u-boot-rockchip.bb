@@ -17,11 +17,13 @@ PV = "2017.09"
 
 LIC_FILES_CHKSUM = "file://Licenses/README;md5=a2c678cfd4a4d97135585cad908541c6"
 
-SRCREV = "4d88b0a83c87488f343fb4cc4f56ffc598b2e0a3"
-SRCREV_rkbin = "32ccaf811ae70ce050aa810869c63c2b34324d59"
+SRCREV = "1c535d65b8509f388d09e49fb6961f49fda35a1d"
+# Keep the RK3506B loader config and matching DDR firmware. The later master
+# commit replaces these with non-B RK3506 assets and removes this INI.
+SRCREV_rkbin = "affd78ce1a445b04ef143761b3164b7eeb740fc6"
 SRC_URI = " \
-	git:///lindata2/luckfox/luckfox_sdk_2508/u-boot;protocol=file;nobranch=1; \
-	git:///lindata2/luckfox/luckfox_sdk_2508/rkbin;protocol=file;nobranch=1;name=rkbin;destsuffix=rkbin; \
+	git://github.com/rockchip-linux/u-boot.git;protocol=https;branch=next-dev; \
+	git://github.com/rockchip-linux/rkbin.git;protocol=https;branch=master;name=rkbin;destsuffix=rkbin; \
 	file://luckfox-boot.cfg \
 "
 
@@ -65,9 +67,14 @@ do_configure:prepend() {
 
 	sed -i 's/ found;/ found = NULL;/' ${S}/lib/avb/libavb/avb_slot_verify.c
 
-	# Append custom bootcmd to evb_rk3506.h (safe as it overrides previous defines)
+	# Append custom bootcmd to evb_rk3506.h (safe as it overrides previous defines).
+	#
+	# fdt_overlays is a space-separated list of overlay filenames relative to
+	# /boot.  Each overlay is loaded into fdtoverlay_addr_r and applied to the
+	# working DTB.  Keep a default scratch address for the stock RK3506 memory
+	# layout; users can override fdtoverlay_addr_r in the saved environment.
 	echo '#undef CONFIG_BOOTCOMMAND' >> ${S}/include/configs/evb_rk3506.h
-	echo '#define CONFIG_BOOTCOMMAND "ext4load mmc 0:2 ${kernel_addr_r} /boot/zImage; ext4load mmc 0:2 ${fdt_addr_r} /boot/devtree.dtb; bootz ${kernel_addr_r} - ${fdt_addr_r}"' >> ${S}/include/configs/evb_rk3506.h
+	echo '#define CONFIG_BOOTCOMMAND "ext4load mmc 0:2 ${kernel_addr_r} /boot/zImage; ext4load mmc 0:2 ${fdt_addr_r} /boot/devtree.dtb; fdt addr ${fdt_addr_r}; if test -n \"${fdt_overlays}\"; then if test -z \"${fdtoverlay_addr_r}\"; then setenv fdtoverlay_addr_r 0x01e00000; fi; fdt resize 0x10000; for overlay in ${fdt_overlays}; do ext4load mmc 0:2 ${fdtoverlay_addr_r} /boot/${overlay} && fdt apply ${fdtoverlay_addr_r}; done; fi; bootz ${kernel_addr_r} - ${fdt_addr_r}"' >> ${S}/include/configs/evb_rk3506.h
 }
 
 # Generate Rockchip style loader binaries

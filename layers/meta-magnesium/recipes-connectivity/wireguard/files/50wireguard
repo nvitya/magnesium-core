@@ -1,0 +1,26 @@
+#!/bin/sh
+# ifupdown invokes this after an interface has obtained its configured
+# address.  Bring up every WireGuard configuration supplied on the image.
+
+# The loopback interface is configured before the uplink, so it is not a
+# useful indication that network connectivity is available yet.
+[ "${IFACE}" = "lo" ] && exit 0
+
+[ -d /etc/wireguard ] || exit 0
+
+for config in /etc/wireguard/*.conf; do
+    [ -f "${config}" ] || continue
+
+    interface=${config##*/}
+    interface=${interface%.conf}
+
+    # Do not disrupt an interface that is already up when a second physical
+    # interface (for example Wi-Fi after Ethernet) is configured.
+    wg show "${interface}" >/dev/null 2>&1 && continue
+
+    # A VPN configuration error must not make the base network interface fail.
+    # The next successful ifup event retries the activation.
+    wg-quick up "${config}" || logger -t wireguard "failed to bring up ${interface}"
+done
+
+exit 0

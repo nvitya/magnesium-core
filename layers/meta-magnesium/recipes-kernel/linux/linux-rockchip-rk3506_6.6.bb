@@ -34,6 +34,8 @@ SRC_URI = " \
     git://github.com/rockchip-linux/kernel.git;protocol=https;branch=${KBRANCH} \
     file://defconfig \
     file://magnesium-core.cfg \
+    file://wireguard.cfg \
+    file://netfilter.cfg \
     file://rv3032.cfg \
     file://${RK3506_DTS} \
     file://${RK3506_DTSI} \

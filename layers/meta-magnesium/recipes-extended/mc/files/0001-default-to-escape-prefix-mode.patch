@@ -1,0 +1,19 @@
+Subject: [PATCH] Default to Escape prefix mode
+
+Keep Escape as a prefix until the next key arrives, avoiding the
+single-Escape timeout when using Esc-Esc and Esc-Enter on the target.
+Users can still enable single-Escape mode in their personal configuration.
+
+Upstream-Status: Inappropriate [distribution default]
+
+--- a/lib/tty/key.c
++++ b/lib/tty/key.c
+@@ -92,7 +92,7 @@
+ int mou_auto_repeat = 100;      /* ms */
+ int double_click_speed = 250;   /* ms */
+-gboolean old_esc_mode = TRUE;
++gboolean old_esc_mode = FALSE;
+ /* timeout for old_esc_mode in usec */
+ int old_esc_mode_timeout = G_USEC_PER_SEC;      /* us, settable via env */
+ gboolean use_8th_bit_as_meta = FALSE;
+ 

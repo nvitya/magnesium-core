@@ -34,6 +34,10 @@ IMAGE_INSTALL:append = " \
     gdbserver \
     nano \
     evtest \
+    magnesium-wireguard \
+    hostapd \
+    dnsmasq \
+    nftables \
     ${VIRTUAL-RUNTIME_dev_manager} \
     ${CORE_IMAGE_EXTRA_INSTALL} \
 "

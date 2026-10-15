@@ -67,7 +67,9 @@ do_configure:prepend() {
 
 	sed -i 's/ found;/ found = NULL;/' ${S}/lib/avb/libavb/avb_slot_verify.c
 
-	# Append custom bootcmd to evb_rk3506.h (safe as it overrides previous defines).
+	# Set the common default bootcmd for every RK3506 machine using this recipe.
+	# Saved U-Boot environments may retain an older bootcmd and need one-time
+	# updating with `setenv bootcmd ...; saveenv` on already provisioned boards.
 	#
 	# fdt_overlays is a space-separated list of overlay filenames relative to
 	# /boot.  Each overlay is loaded into fdtoverlay_addr_r and applied to the

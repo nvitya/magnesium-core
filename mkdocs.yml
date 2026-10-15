@@ -1,0 +1,31 @@
+site_name: Magnesium-Core Embedded Linux
+site_description: Documentation for Magnesium-Core Embedded Linux
+repo_url: https://github.com/nvitya/magnesium-core
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.indexes
+    - content.code.copy
+    - search.highlight
+
+plugins:
+  - search
+  - monorepo
+
+extra_css:
+  - stylesheets/extra.css
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+
+validation:
+  nav:
+    omitted_files: warn
+    not_found: warn
+  links:
+    not_found: warn
+    unrecognized_links: warn
+    anchors: warn

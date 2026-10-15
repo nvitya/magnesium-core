@@ -1,0 +1,21 @@
+From: Magnesium maintainers
+Subject: [PATCH] symbol_why: skip directories when scanning Kconfig files
+
+The recursive glob also matches directories such as Kconfiglib in the
+CVITEK kernel tree. Opening these as files raises IsADirectoryError and
+aborts do_kernel_configcheck before the configuration can be audited.
+Only scan regular files, retaining the normal configuration audit.
+
+Upstream-Status: Pending
+
+--- a/tools/symbol_why.py
++++ b/tools/symbol_why.py
+@@ -899,6 +899,8 @@
+ kconfigs = glob.glob( ksrc + "/**/Kconfig*", recursive=True )
+ all_configs = []
+ for k in kconfigs:
++    if not os.path.isfile(k):
++        continue
+     with open( k ) as kconfig_file:
+         for kline in kconfig_file:
+             m = re.match( r"^(menu).*config (\w*)", kline )

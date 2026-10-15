@@ -19,7 +19,15 @@ The Magnesium-Core configurations here currently are using the `wrynose` (LTS) Y
 
 | `luckfox-lyra-pi`      | Luckfox Lyra Pi-B WiFi                        |
 | `luckfox-lyra-zero-w`  | Luckfox Lyra Zero W                           |
-| `milkv-duos`           | Milk-V Duo-S                                  |
+| `milkv-duo`           | Milk-V Duo, 64 MiB (RISC-V)                   |
+| `milkv-duo-s`         | Milk-V Duo S, 512 MiB (RISC-V)                |
+| `milkv-duo-256`       | Milk-V Duo 256M, 256 MiB (RISC-V)             |
+| `licheerv-nano`       | Sipeed LicheeRV Nano, 256 MiB (RISC-V)         |
+
+For the Duo/Nano machines, see the [CV18xx build and boot instructions](layers/meta-magnesium/docs/cv18xx-machines.md).
+They use a headless kernel with remoteproc and require a separately provisioned
+board-specific RISC-V bootloader. The Rockchip boot image below is not suitable
+for these machines.
 
 # Development Environment Setup
 

@@ -1,0 +1,51 @@
+From: Magnesium maintainers
+Subject: [PATCH] Allow headless CV18xx kernels and CV180x remoteproc
+
+Do not force the multimedia allocator into every CVITEK kernel. Permit
+remoteproc to gate the small C906 clock on CV180x as on CV181x, and
+recognize its compatible. Count reset bits from bytes, not words. The
+board DTS extends the reset register window through the C906 reset bits.
+
+Upstream-Status: Inappropriate [BSP integration]
+
+--- a/arch/riscv/mach-cvitek/Kconfig
++++ b/arch/riscv/mach-cvitek/Kconfig
+@@ -1,6 +1,5 @@
+ config ARCH_CVITEK
+     bool "Cvitek SoC Family"
+-	select ION_CVITEK
+ 	select SCHED_CVITEK
+ 	help
+       This enables support for Cvitek SoC family.
+--- a/drivers/clk/cvitek/clk-cv180x.c
++++ b/drivers/clk/cvitek/clk-cv180x.c
+@@ -1651,7 +1651,7 @@
+ 		REG_CLK_BYP_1, 7,
+ 		REG_CLK_SEL_0, 24,
+ 		REG_DIV_CLK_C906_1_0, 8,
+-		CLK_IS_CRITICAL),
++		CLK_IGNORE_UNUSED),
+ 	CV180X_CLK(CV180X_CLK_SRC_VIP_SYS_3, "clk_src_vip_sys_3",
+ 		((const char *[]) {"osc", "clk_mipimpll", "clk_cam0pll", "clk_disppll", "clk_fpll"}),
+ 		REG_CLK_EN_4, 15,
+--- a/drivers/remoteproc/cvitek_remoteproc.c
++++ b/drivers/remoteproc/cvitek_remoteproc.c
+@@ -273,6 +273,7 @@
+ 
+ static const struct of_device_id cvitek_rproc_match[] = {
+ 	{ .compatible = "cvitek,cv181x-c906_1" },
++	{ .compatible = "cvitek,cv180x-c906_1" },
+ 	{},
+ };
+ 
+--- a/drivers/reset/reset-cvitek.c
++++ b/drivers/reset/reset-cvitek.c
+@@ -92,7 +92,7 @@
+ 	data->membase = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(data->membase))
+ 		goto out_free_devm;
+-	data->rcdev.nr_resets = resource_size(res) * 32;
++	data->rcdev.nr_resets = resource_size(res) * 8;
+ 
+ 	spin_lock_init(&data->lock);
+ 

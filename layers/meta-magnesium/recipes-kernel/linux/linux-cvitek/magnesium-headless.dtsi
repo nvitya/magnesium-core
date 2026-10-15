@@ -1,0 +1,54 @@
+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+#include <dt-bindings/mailbox/cvitek-mailbox.h>
+
+/ {
+	/delete-node/ fast_image;
+	/delete-node/ cvitek-ion;
+	/delete-node/ rtos_cmdqu;
+
+	chosen {
+		bootargs = "console=ttyS0,115200 root=/dev/mmcblk0p2 rootwait rw";
+	};
+
+	reserved-memory {
+		c906l_mem: rtos@CVIMMAP_FREERTOS_ADDR {
+			reg = <0 CVIMMAP_FREERTOS_ADDR 0 CVIMMAP_FREERTOS_SIZE>;
+			no-map;
+		};
+	};
+
+	mailbox: mailbox@1900000 {
+		compatible = "cvitek,sg200x-mailbox";
+		reg = <0 0x01900000 0 0x1000>;
+		interrupt-parent = <&plic0>;
+		interrupts = <101 IRQ_TYPE_LEVEL_HIGH>;
+		#mbox-cells = <4>;
+		status = "okay";
+	};
+
+	c906l_rproc: remoteproc {
+		compatible = CVIMMAP_RPROC_COMPAT;
+		memory-region = <&c906l_mem>;
+		firmware = "cvirtos.elf";
+		resets = <&rst 294>;
+		reset-names = "sw_reset";
+		clocks = <&clk CVIMMAP_C906_CLK>;
+		mboxes = <&mailbox 0 CVITEK_MBOX_DIRECTION_TX CVITEK_MBOX_C906_1 1>,
+			 <&mailbox 1 CVITEK_MBOX_DIRECTION_RX CVITEK_MBOX_C906_1 1>;
+		mbox-names = "vq_tx", "vq_rx";
+		status = "okay";
+	};
+};
+
+/delete-node/ &ion_reserved;
+&rst { reg = <0 0x03003000 0 0x28>; };
+&mipi_rx { status = "disabled"; };
+&{/vi} { status = "disabled"; };
+&{/vpss} { status = "disabled"; };
+&{/dwa} { status = "disabled"; };
+&{/rgn} { status = "disabled"; };
+&{/vcodec} { status = "disabled"; };
+&{/jpu} { status = "disabled"; };
+&{/cvi_vc_drv} { status = "disabled"; };
+&{/tpu} { status = "disabled"; };
+

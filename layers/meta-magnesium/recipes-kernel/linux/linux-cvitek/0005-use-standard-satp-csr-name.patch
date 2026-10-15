@@ -1,0 +1,19 @@
+From: Magnesium maintainers
+Subject: [PATCH] riscv: use the numeric SATP CSR with modern assemblers
+
+The vendor context switch code uses the obsolete sptbr assembler alias.
+Use CSR_SATP as the rest of the kernel does, allowing current OE binutils.
+
+Upstream-Status: Inappropriate [vendor BSP code]
+
+--- a/arch/riscv/mm/context.c
++++ b/arch/riscv/mm/context.c
+@@ -64,7 +64,7 @@
+ 	asid = (next->context.asid.counter & SATP_ASID_MASK)
+ 		<< SATP_ASID_SHIFT;
+ 
+-	csr_write(sptbr, virt_to_pfn(next->pgd) | SATP_MODE | asid);
++	csr_write(CSR_SATP, virt_to_pfn(next->pgd) | SATP_MODE | asid);
+ #endif
+ 
+ 	flush_icache_deferred(next);

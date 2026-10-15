@@ -1,6 +1,9 @@
 SUMMARY = "Magnesium Boot Image Generator"
 LICENSE = "MIT"
 
+# This image contains Rockchip loader offsets; CV18xx boards use FAT + fip.bin.
+COMPATIBLE_MACHINE = "(luckfox-lyra-plus|luckfox-lyra-ultra|luckfox-lyra-pi|luckfox-lyra-zero-w)"
+
 inherit image
 
 IMAGE_FSTYPES = "wic"

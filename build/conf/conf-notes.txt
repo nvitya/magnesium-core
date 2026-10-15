@@ -7,5 +7,5 @@ For main linux image:
 
 For bootimg:
 
-  bitbake magnesium-bootimg
+  bitbake bootimg-magnesium
 
